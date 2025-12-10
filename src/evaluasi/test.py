@@ -11,11 +11,14 @@ from PIL import Image
 from src.train.dataset import load_patch_pairs, SRGANDataset
 from src.train.model import Generator
 
+import warnings
+warnings.filterwarnings("ignore", category=RuntimeWarning)
+
 
 # =========================
 # KONFIGURASI
 # =========================
-EPOCH_LIST = [5, 10, 15, 20]  # sesuai pembagian anggota
+EPOCH_LIST = [1]  # sesuai pembagian anggota
 BATCH_SIZE = 8
 SAVE_SAMPLES = 10
 
@@ -117,8 +120,22 @@ for epoch in EPOCH_LIST:
                     save(sr_img,      f"{gid:05d}_SRGAN.png")
                     saved += 1
 
-    print(f"\n📊 HASIL EPOCH {epoch}")
-    print(f"PSNR Bicubic : {np.mean(psnr_bic):.2f}")
-    print(f"PSNR SRGAN   : {np.mean(psnr_sr):.2f}")
-    print(f"SSIM Bicubic : {np.mean(ssim_bic):.4f}")
-    print(f"SSIM SRGAN   : {np.mean(ssim_sr):.4f}")
+# konversi ke numpy array
+psnr_bic_arr = np.array(psnr_bic)
+psnr_sr_arr  = np.array(psnr_sr)
+
+# abaikan nilai yang inf atau nan
+psnr_bic_mean = np.mean(psnr_bic_arr[np.isfinite(psnr_bic_arr)])
+psnr_sr_mean  = np.mean(psnr_sr_arr[np.isfinite(psnr_sr_arr)])
+
+ssim_bic_arr = np.array(ssim_bic)
+ssim_sr_arr  = np.array(ssim_sr)
+
+ssim_bic_mean = np.mean(ssim_bic_arr[np.isfinite(ssim_bic_arr)])
+ssim_sr_mean  = np.mean(ssim_sr_arr[np.isfinite(ssim_sr_arr)])
+
+print(f"\n📊 HASIL EPOCH {epoch}")
+print(f"PSNR Bicubic : {psnr_bic_mean:.2f}")
+print(f"PSNR SRGAN   : {psnr_sr_mean:.2f}")
+print(f"SSIM Bicubic : {ssim_bic_mean:.4f}")
+print(f"SSIM SRGAN   : {ssim_sr_mean:.4f}")
