@@ -5,8 +5,9 @@ from torch.utils.data import DataLoader
 from torch.optim import Adam
 from tqdm import tqdm
 
-from dataset import load_patch_pairs, SRGANDataset
-from model import Generator, Discriminator
+from src.train.dataset import load_patch_pairs, SRGANDataset
+from src.train.model import Generator, Discriminator
+
 
 
 # =========================
